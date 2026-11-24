@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#D64E38">
+  <meta name="description" content="Buenas Costumbres · Cafetería y Pastelería Cute & Vintage cerca a Plaza Uyuni, Av. Héroes del Pacífico, La Paz.">
+  <title>Buenas Costumbres | Cafetería Cute & Vintage</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+     <div class="brand-box">
+        <span class="brand-badge">
+          <img src="./logo.jpeg" alt="Logo de Buenas Costumbres" class="brand-logo-img">
+        </span>
+        <div>
+          <h1>Buenas Costumbres</h1>
+          <p class="brand-sub">Plaza Uyuni · Av. Héroes del Pacífico · Lun–Sáb 11:00–19:00</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="estadoRed" class="status-micro" aria-live="polite" title="Estado sin conexión">● Offline</span>
+        <button type="button" id="btnInstalarPWA" class="btn btn-mustard hidden" aria-label="Instalar aplicación">
+          ↓ App
+        </button>
+        <button type="button" id="btnTema" class="btn btn-soft" aria-label="Cambiar modo claro u oscuro">
+          🌙
+        </button>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="Navegación principal">
+      <button type="button" class="nav-btn active" data-vista="catalogo">
+        <span aria-hidden="true">🍰</span>
+        <span>Catálogo</span>
+      </button>
+      <button type="button" class="nav-btn" data-vista="carrito">
+        <span aria-hidden="true">🧺</span>
+        <span>Pedido (<strong id="navContadorCarrito">0</strong>)</span>
+      </button>
+      <button type="button" class="nav-btn" data-vista="info">
+        <span aria-hidden="true">🕯️</span>
+        <span>Local</span>
+      </button>
+      <button type="button" class="nav-btn" data-vista="bitacora">
+        <span aria-hidden="true">📖</span>
+        <span>Bitácora</span>
+      </button>
+    </nav>
+
+    <main class="main-content">
+      <!-- VISTA CATÁLOGO TIPO CARRUSEL -->
+      <section id="vista-catalogo" class="vista active" aria-labelledby="titulo-catalogo">
+        <div class="catalogo-cabecera">
+          <div class="titulo-fila">
+            <h2 id="titulo-catalogo">✿ Vitrina Vintage · Tradición y sabor en cada momento ✿</h2>
+            <div class="carrusel-arrows">
+              <button type="button" id="btnPrevCarrusel" class="btn btn-soft btn-round" aria-label="Desplazar carrusel a la izquierda">‹</button>
+              <button type="button" id="btnNextCarrusel" class="btn btn-soft btn-round" aria-label="Desplazar carrusel a la derecha">›</button>
+            </div>
+          </div>
+
+          <div class="filtros-fila">
+            <label for="inputBuscador" class="sr-only">Buscar dulce, pan, pie o salado</label>
+            <input type="search" id="inputBuscador" placeholder="Buscar croissant, pie de limón, rollo, alfajor..." autocomplete="off">
+
+            <div class="categorias-chips" role="group" aria-label="Categorías">
+              <button type="button" class="chip active" data-cat="todos">Todos</button>
+              <button type="button" class="chip" data-cat="panaderia">Pan & Croissants</button>
+              <button type="button" class="chip" data-cat="pasteleria">Pasteles & Dulces</button>
+              <button type="button" class="chip" data-cat="pies">Pies & Rollos</button>
+              <button type="button" class="chip" data-cat="salado">Dulce & Salado</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="carruselCatalogo" class="carrusel-catalogo" aria-live="polite"></div>
+      </section>
+
+      <!-- VISTA CARRITO + ENVÍO A WHATSAPP EN 8 SEGUNDOS -->
+      <section id="vista-carrito" class="vista hidden" aria-labelledby="titulo-carrito">
+        <div class="panel-scroll">
+          <div class="carrito-layout">
+            <div class="vintage-card carrito-box">
+              <h2 id="titulo-carrito">✿ Tu Canasta de Pedido (Bs.) ✿</h2>
+              <div id="listaCarrito" class="carrito-lista"></div>
+              <div class="totales-box">
+                <div class="fila-total">
+                  <span>Subtotal:</span>
+                  <strong id="txtSubtotal">0.00 Bs.</strong>
+                </div>
+                <div class="fila-total total-final">
+                  <span>Total:</span>
+                  <strong id="txtTotal">0.00 Bs.</strong>
+                </div>
+              </div>
+            </div>
+
+            <form id="formPedido" class="vintage-card pedido-form" novalidate>
+              <h3>Enviar por WhatsApp (8s)</h3>
+
+              <div class="form-group">
+                <label for="clienteNombre">Nombre (solo letras, sin números) *</label>
+                <input type="text" id="clienteNombre" name="clienteNombre" placeholder="Ej. Luis Ru" required>
+                <span id="errNombre" class="campo-error" aria-live="polite"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="clienteTelefono">Celular Bolivia (8 números, inicia con 6 o 7) *</label>
+                <input type="tel" id="clienteTelefono" name="clienteTelefono" placeholder="Ej. 67840739" maxlength="8" inputmode="numeric" required>
+                <span id="errTelefono" class="campo-error" aria-live="polite"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="tipoRetiro">Retiro o envío</label>
+                <select id="tipoRetiro" name="tipoRetiro">
+                  <option value="Cafetería Plaza Uyuni">Cafetería · Av. Héroes del Pacífico</option>
+                  <option value="Envío Zona Uyuni">Envío · Cerca a Plaza Uyuni</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="notasPedido">Notas dulces</label>
+                <input type="text" id="notasPedido" name="notasPedido" placeholder="Ej. Bien tibio, con servilletas">
+                <span id="errNotas" class="campo-error" aria-live="polite"></span>
+              </div>
+
+              <div id="feedbackForm" class="feedback-msg" role="alert" aria-live="polite"></div>
+
+              <div class="confirm-actions">
+                <button type="button" id="btnIniciarConfirmacion" class="btn btn-coral btn-block">
+                  Enviar por WhatsApp (8s)
+                </button>
+                <button type="button" id="btnCancelarConfirmacion" class="btn btn-danger btn-block hidden">
+                  Cancelar envío a WhatsApp (<span id="contadorSegundos">8</span>s)
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="vintage-card historial-box">
+            <h3>Últimos Pedidos Guardados</h3>
+            <div id="listaHistorial"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA LOCAL Y HORARIO -->
+      <section id="vista-info" class="vista hidden" aria-labelledby="titulo-info">
+        <div class="panel-scroll info-grid">
+          <article class="vintage-card info-card">
+            <h2 id="titulo-info">✿ Buenas Costumbres · Rinconcito Vintage ✿</h2>
+            <p class="info-lead">Panadería, Cafetería y Pastelería con encanto cálido y recetas hechas con cariño.</p>
+            <ul class="info-lista">
+              <li><strong>Dirección:</strong> Cerca a Plaza Uyuni, Av. Héroes del Pacífico, La Paz, Bolivia.</li>
+              <li><strong>Horario:</strong> Lunes a sábado de 11:00 a 19:00 (11:00 AM – 7:00 PM).</li>
+              <li><strong>Carta:</strong> Pan, Pasteles, Croissants, Queques, Galletas, Alfajores, Cinnabon, Rollos de Canela, Empanadas, Pie de Limón, Pie de Maracuyá, Pie de Frutilla y Variado Dulce y Salado.</li>
+            </ul>
+          </article>
+
+          <article class="vintage-card info-card">
+            <h3>Fachada con Zoom</h3>
+            <div class="zoom-box">
+              <img id="imgLocalCute" class="zoom-img" alt="Fachada cute y vintage de Buenas Costumbres cerca a Plaza Uyuni, Av. Héroes del Pacífico, La Paz">
+            </div>
+            <p class="mini-hint">Pasa el cursor o toca la imagen para hacer zoom.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- VISTA BITÁCORA DE PEDIDOS -->
+      <section id="vista-bitacora" class="vista hidden" aria-labelledby="titulo-bitacora">
+        <div class="panel-scroll">
+          <div class="bitacora-top">
+            <h2 id="titulo-bitacora">✿ Bitácora de Pedidos · Buenas Costumbres ✿</h2>
+            <button type="button" id="btnLimpiarBitacora" class="btn btn-soft">
+              Limpiar bitácora
+            </button>
+          </div>
+          <div id="listaBitacora" class="vintage-card bitacora-box" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>✿ <strong>Buenas Costumbres</strong> · Cerca a Plaza Uyuni, Av. Héroes del Pacífico, La Paz · Lun–Sáb 11:00 a 19:00 ✿</p>
+    </footer>
+  </div>
+
+  <!-- MODAL DETALLE CON ZOOM -->
+  <div id="modalProducto" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal-card vintage-card">
+      <button type="button" id="btnCerrarModal" class="modal-close" aria-label="Cerrar ventana">✕</button>
+      <div id="modalContenido"></div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
